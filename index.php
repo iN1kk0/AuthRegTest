@@ -9,7 +9,7 @@
     <body>
         <div id="wrapper">
             <?php
-            if (empty($_COOKIE['user_id'])) {
+            if (empty($_COOKIE['id'])) {
                 ?>
                 <div id="first_time">
                     First time here? <a id="reg" href='#'>Register?</a><br />
@@ -21,8 +21,21 @@
                         Password:<br /><input type="password" name="password" id="password" /><br />
                         <a id="lets_reg" href="#">Go!</a> 
                     </form>
-                    <div id="errors">
-                    </div>
+                </div>
+                <div id="authorization" style="display: none;">
+                    <form method="POST" action="">
+                        Login:<br /><input type="text" name="name" /><br />
+                        Password:<br /><input type="password" name="pass" /><br />
+                        <a id="sign_in" href="#">Sign in!</a> 
+                    </form>
+                </div>
+                <div id="errors">
+                </div>
+                <div id="profile">
+                </div>
+            <?php } else { ?>
+                <div>
+                    <?php echo "Hello, " . $_COOKIE['username']; ?>
                 </div>
             <?php } ?>
         </div>
@@ -51,13 +64,41 @@
                 success: function(response) {
                     if (response.errors != '') {
                         $('#errors').html(response.errors);
-                    }else{
+                    } else {
                         $('#errors').hide();
                     }
-                    
-                    if(response.success == 'ok'){
+
+                    if (response.success == 'ok') {
                         $('#registration').fadeOut(100);
-                        alert("Thank you!");
+                        alert('Thank you! You can sign in now!');
+                        $('#authorization').fadeIn(100);
+                    }
+                }
+            });
+
+        });
+
+        $('#sign_in').click(function(e) {
+            e.preventDefault();
+
+            var url = 'validate.php';
+            var data = $('#authorization form').serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                dataType: 'json',
+                data: data,
+                success: function(response) {
+                    if (response.errors != '') {
+                        $('#errors').html(response.errors);
+                    } else {
+                        $('#errors').hide();
+                    }
+
+                    if (response.success == 'ok') {
+                        $('#authorization').fadeOut(100);
+                        $('#profile').html('Hello, ' + response.username);
                     }
                 }
             });

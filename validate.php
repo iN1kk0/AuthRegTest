@@ -8,19 +8,19 @@ if (isset($_POST['login'])) {
 
     //Check login/password 
     if (!preg_match("/^[a-zA-Z0-9]+$/", $_POST['login'])) {
-        $errors .= "Only english and numbers, please (login)<br />";
+        $errors .= "Only english and numbers, please (for login)<br />";
     }
 
     if (strlen($_POST['login']) < 3 or strlen($_POST['login']) > 30) {
-        $errors .= "At least three characters and no more than thirty (login)<br />";
+        $errors .= "At least three characters and no more than thirty (for login)<br />";
     }
 
     if (!preg_match("/^[a-zA-Z0-9]+$/", $_POST['password'])) {
-        $errors .= "Only english and numbers, please (password)<br />";
+        $errors .= "Only english and numbers, please (for password)<br />";
     }
 
     if (strlen($_POST['password']) < 3 or strlen($_POST['password']) > 30) {
-        $errors .= "At least three characters and no more than thirty (password)<br />";
+        $errors .= "At least three characters and no more than thirty (for password)<br />";
     }
 
     $query = mysql_query("SELECT COUNT(id) FROM users WHERE login='" . mysql_real_escape_string($_POST['login']) . "'") or die("<br>Invalid query: " . mysql_error());
@@ -29,7 +29,7 @@ if (isset($_POST['login'])) {
     }
 
     if (!empty($errors)) {
-        $err = $errors;
+        $error = $errors;
         $success = "fail";
     } else {
         $login = $_POST['login'];
@@ -38,7 +38,31 @@ if (isset($_POST['login'])) {
         mysql_query("INSERT INTO users SET login='" . $login . "', password='" . $password . "'");
         $success = "ok";
     }
-    $result = array("login" => $_POST['login'], "errors" => $err, "success" => $success);
+
+    $result = array("login" => $_POST['login'], "errors" => $error, "success" => $success);
+    echo json_encode($result);
+}
+
+if (isset($_POST['name'])) {
+    $errors = '';
+ 
+    $user = mysql_fetch_assoc(mysql_query("SELECT id, login, password FROM `users` WHERE `login`='" . mysql_real_escape_string($_POST['name']) . "' LIMIT 1"));
+
+    if ($user['password'] === md5(md5($_POST['pass']))) {    
+        setcookie("id", $user['id'], time() + 60 * 60 * 24 * 30);
+        setcookie("username", $user['login'], time() + 60 * 60 * 24 * 30);
+    } else {
+        $errors .= "Incorrect login/password <br />";
+    }
+
+    if (!empty($errors)) {
+        $error = $errors;
+        $success = "fail";
+    } else {
+        $success = "ok";
+    }
+
+    $result = array("username" => $_POST['name'], "errors" => $error, "success" => $success);
     echo json_encode($result);
 }
 ?>
