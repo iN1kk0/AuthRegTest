@@ -31,11 +31,11 @@
                 </div>
                 <div id="errors">
                 </div>
-                <div id="profile">
-                </div>
+
             <?php } else { ?>
-                <div>
+                <div id="prof">
                     <?php echo "Hello, " . $_COOKIE['username']; ?>
+                    <a class="exit" href="#">Logout</a>
                 </div>
             <?php } ?>
         </div>
@@ -48,6 +48,13 @@
 
             $('#first_time').fadeOut(300);
             $('#registration').fadeIn(100);
+        });
+
+        $('#auth').click(function(e) {
+            e.preventDefault();
+
+            $('#first_time').fadeOut(300);
+            $('#authorization').fadeIn(100);
         });
 
         $('#lets_reg').click(function(e) {
@@ -97,12 +104,27 @@
                     }
 
                     if (response.success == 'ok') {
-                        $('#authorization').fadeOut(100);
-                        $('#profile').html('Hello, ' + response.username);
+                        window.location.reload();
                     }
                 }
             });
 
+        });
+
+        $('.exit').on('click',function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: 'validate.php',
+                dataType: 'json',
+                data: 'exit=true',
+                success: function(response) {
+                    if (response.success == 'ok') {
+                        window.location.reload();
+                    }
+                }
+            });
         });
     });
 </script>

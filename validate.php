@@ -45,10 +45,10 @@ if (isset($_POST['login'])) {
 
 if (isset($_POST['name'])) {
     $errors = '';
- 
+
     $user = mysql_fetch_assoc(mysql_query("SELECT id, login, password FROM `users` WHERE `login`='" . mysql_real_escape_string($_POST['name']) . "' LIMIT 1"));
 
-    if ($user['password'] === md5(md5($_POST['pass']))) {    
+    if ($user['password'] === md5(md5($_POST['pass']))) {
         setcookie("id", $user['id'], time() + 60 * 60 * 24 * 30);
         setcookie("username", $user['login'], time() + 60 * 60 * 24 * 30);
     } else {
@@ -63,6 +63,12 @@ if (isset($_POST['name'])) {
     }
 
     $result = array("username" => $_POST['name'], "errors" => $error, "success" => $success);
+    echo json_encode($result);
+}
+
+if (isset($_POST['exit'])) {
+    setcookie("id", '');
+    $result = array("test" => $_POST['exit'], "success" => 'ok');
     echo json_encode($result);
 }
 ?>
