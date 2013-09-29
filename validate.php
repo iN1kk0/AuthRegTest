@@ -3,6 +3,7 @@
 //con db
 include "db/config.php";
 
+//regi validation
 if (isset($_POST['login'])) {
     $errors = '';
 
@@ -23,7 +24,7 @@ if (isset($_POST['login'])) {
         $errors .= "At least three characters and no more than thirty (for password)<br />";
     }
 
-    $query = mysql_query("SELECT COUNT(id) FROM users WHERE login='" . mysql_real_escape_string($_POST['login']) . "'") or die("<br>Invalid query: " . mysql_error());
+    $query = mysql_query("SELECT COUNT(id) FROM users WHERE login='" . mysql_real_escape_string($_POST['login']) . "'") or die("<br>ERROR: " . mysql_error());
     if (mysql_result($query, 0) > 0) {
         $errors .= "User exists<br />";
     }
@@ -43,6 +44,7 @@ if (isset($_POST['login'])) {
     echo json_encode($result);
 }
 
+//auth valid
 if (isset($_POST['name'])) {
     $errors = '';
 
@@ -66,6 +68,7 @@ if (isset($_POST['name'])) {
     echo json_encode($result);
 }
 
+//exit
 if (isset($_POST['exit'])) {
     setcookie("id", '');
     $result = array("test" => $_POST['exit'], "success" => 'ok');
